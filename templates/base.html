@@ -1,6 +1,7 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="ru">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,6 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
+
 <body>
 
     <nav class="navbar">
@@ -20,13 +22,14 @@
         </ul>
         <div class="nav-actions">
             {% if user.is_authenticated %}
-                <a href="{% url 'members:dashboard' %}" class="btn-primary" style="margin-right: 10px;">Кабинет</a>
-                <form action="{% url 'members:logout' %}" method="POST" style="display:inline;">
-                    {% csrf_token %}
-                    <button type="submit" style="background:none; border:none; color: #888; cursor:pointer; font-size: 0.9rem;">Выйти</button>
-                </form>
+            <a href="{% url 'members:dashboard' %}" class="btn-primary" style="margin-right: 10px;">Кабинет</a>
+            <form action="{% url 'members:logout' %}" method="POST" style="display:inline;">
+                {% csrf_token %}
+                <button type="submit"
+                    style="background:none; border:none; color: #888; cursor:pointer; font-size: 0.9rem;">Выйти</button>
+            </form>
             {% else %}
-                <a href="{% url 'members:login' %}" class="btn-primary">Войти</a>
+            <a href="{% url 'members:login' %}" class="btn-primary">Войти</a>
             {% endif %}
         </div>
     </nav>
@@ -34,5 +37,37 @@
     {% block content %}
     {% endblock %}
 
+    <footer>
+        <div class="footer-grid">
+            <div class="footer-col">
+                <h4 style="color: white; font-size: 1.5rem; margin-bottom: 1.5rem;">FITNESS<span>CLUB</span></h4>
+                <p style="color: #888; line-height: 1.6;">Ваш путь к идеальному телу начинается здесь. Профессиональное
+                    оборудование и лучшие тренеры города.</p>
+            </div>
+            <div class="footer-col">
+                <h4>Навигация</h4>
+                <ul>
+                    <li><a href="/">Главная</a></li>
+                    <li><a href="{% url 'schedule:list' %}">Расписание</a></li>
+                    <li><a href="{% url 'schedule:trainers' %}">Тренеры</a></li>
+                    <li><a href="{% url 'blog:list' %}">Блог</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Контакты</h4>
+                <ul style="color: #888;">
+                    <li>📍 ул. Фитнеса, д. 1</li>
+                    <li>📞 +7 (999) 000-00-00</li>
+                    <li>✉️ info@fit-django.ru</li>
+                    <li>🕒 24/7</li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            &copy; 2026 FITNESSCLUB. Все права защищены.
+        </div>
+    </footer>
+
 </body>
+
 </html>

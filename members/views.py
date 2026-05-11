@@ -1,9 +1,11 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from .models import MemberProfile
+from django.utils import timezone
+import datetime
+from .models import MemberProfile, MembershipPlan
 from schedule.models import Booking
 
 def register_view(request):
@@ -45,3 +47,19 @@ def dashboard(request):
         'profile': profile,
         'bookings': bookings
     })
+
+@login_required
+def payment_page(request, plan_id):
+    plan = get_object_or_404(MembershipPlan, id=plan_id)
+    if request.method == 'POST':
+        # "Оплата" прошла успешно
+        profile = request.user.profile
+        profile.membership = plan
+        # Если абонемент уже есть и он еще действует, можно прибавлять дни, но мы для простоты перезаписываем с сегодняшнего дня
+        profile.membership_expires = timezone.now().date() + datetime.timedelta(days=plan.duration_days)
+        profile.save()
+        
+        messages.success(request, f'Вы успешно приобрели тариф "{plan.name}"!')
+        return redirect('members:dashboard')
+        
+    return render(request, 'members/payment.html', {'plan': plan})

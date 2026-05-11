@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block title %}Оплата тарифа {{ plan.name }}{% endblock %}
+
+{% block content %}
+<section class="container" style="padding-top: 100px; max-width: 600px; margin: 0 auto;">
+    <h2 class="section-title">Оформление <span>абонемента</span></h2>
+    
+    <div style="background: var(--secondary); padding: 2rem; border-radius: 8px; border: 1px solid var(--accent); margin-bottom: 2rem;">
+        <h3 style="color: var(--primary); margin-bottom: 1rem;">Выбранный тариф: {{ plan.name }}</h3>
+        <p style="font-size: 1.2rem; margin-bottom: 0.5rem;">К оплате: <strong>{{ plan.price|floatformat:0 }} ₽</strong></p>
+        <p style="color: #888; font-size: 0.9rem;">Срок действия: {{ plan.duration_days }} дней</p>
+    </div>
+
+    <div style="background: var(--secondary); padding: 2rem; border-radius: 8px; border: 1px solid var(--accent);">
+        <h3 style="margin-bottom: 1.5rem;">Данные карты (Тестовый режим)</h3>
+        
+        <form method="POST">
+            {% csrf_token %}
+            
+            <div style="margin-bottom: 1rem;">
+                <label style="display: block; margin-bottom: 0.5rem; color: #ccc;">Номер карты</label>
+                <input type="text" placeholder="0000 0000 0000 0000" maxlength="19" required style="width: 100%; padding: 0.8rem; border: 1px solid var(--accent); background: #222; color: white; border-radius: 4px; font-family: monospace;">
+            </div>
+            
+            <div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
+                <div style="flex: 1;">
+                    <label style="display: block; margin-bottom: 0.5rem; color: #ccc;">Срок действия</label>
+                    <input type="text" placeholder="MM/YY" maxlength="5" required style="width: 100%; padding: 0.8rem; border: 1px solid var(--accent); background: #222; color: white; border-radius: 4px;">
+                </div>
+                <div style="flex: 1;">
+                    <label style="display: block; margin-bottom: 0.5rem; color: #ccc;">CVC</label>
+                    <input type="text" placeholder="123" maxlength="3" required style="width: 100%; padding: 0.8rem; border: 1px solid var(--accent); background: #222; color: white; border-radius: 4px;">
+                </div>
+            </div>
+            
+            <div style="margin-bottom: 1.5rem;">
+                <label style="display: block; margin-bottom: 0.5rem; color: #ccc;">Имя на карте</label>
+                <input type="text" placeholder="IVAN IVANOV" required style="width: 100%; padding: 0.8rem; border: 1px solid var(--accent); background: #222; color: white; border-radius: 4px; text-transform: uppercase;">
+            </div>
+
+            <button type="submit" class="btn-primary" style="width: 100%; padding: 1rem; font-size: 1.1rem;">Оплатить {{ plan.price|floatformat:0 }} ₽</button>
+        </form>
+        <p style="text-align: center; margin-top: 1rem; font-size: 0.8rem; color: #666;">
+            Это симуляция оплаты для курсового проекта. Реального списания средств не произойдет. Вы можете ввести любые случайные цифры.
+        </p>
+    </div>
+</section>
+{% endblock %}

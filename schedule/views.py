@@ -17,6 +17,12 @@ def trainer_list(request):
 def book_class(request, schedule_id):
     schedule = get_object_or_404(Schedule, id=schedule_id)
     
+    # Проверка наличия абонемента
+    profile = request.user.profile
+    if not profile.membership or not profile.membership_expires or profile.membership_expires < timezone.now().date():
+        messages.error(request, 'Для записи на занятие необходим активный абонемент!')
+        return redirect('pricing')
+    
     # Проверка на наличие мест
     current_bookings = schedule.bookings.count()
     if current_bookings >= schedule.capacity:

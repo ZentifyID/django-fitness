@@ -21,7 +21,7 @@
                 
                 <p style="color: #ccc; min-height: 80px; margin-bottom: 2rem;">{{ plan.description }}</p>
                 
-                <a href="#" class="btn-primary" style="display: block; padding: 1rem; {% if forloop.counter != 2 %}background: transparent; border: 2px solid var(--primary); color: var(--primary);{% endif %}">
+                <a href="{% url 'members:payment' plan.id %}" class="btn-primary" style="display: block; padding: 1rem; {% if forloop.counter != 2 %}background: transparent; border: 2px solid var(--primary); color: var(--primary);{% endif %}">
                     Оформить
                 </a>
             </div>

@@ -9,6 +9,73 @@
 
 <section class="container">
     <h2 class="section-title">Наши <span>Преимущества</span></h2>
-    <!-- Здесь будет сетка преимуществ -->
+    <div class="features-grid">
+        <div class="feature-card">
+            <div class="feature-icon">🛡️</div>
+            <h3>Новое оборудование</h3>
+            <p>Только современные тренажеры от мировых брендов для максимально эффективных тренировок.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">🧘</div>
+            <h3>Разнообразие зон</h3>
+            <p>Кардио-зона, зона свободных весов, бассейн и залы для групповых программ.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">🏅</div>
+            <h3>Профессионалы</h3>
+            <p>Наши тренеры — мастера спорта и сертифицированные специалисты с огромным опытом.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">🕒</div>
+            <h3>Доступ 24/7</h3>
+            <p>Занимайтесь тогда, когда вам удобно. Мы открыты для вас круглосуточно.</p>
+        </div>
+    </div>
+</section>
+
+<section class="container" style="background: #0a0a0a;">
+    <h2 class="section-title">Наши <span>Тренеры</span></h2>
+    <div class="preview-grid">
+        {% for trainer in trainers %}
+        <div class="preview-card">
+            <div class="preview-image-container">
+                {% if trainer.photo %}
+                    <img src="{{ trainer.photo.url }}" class="preview-image" alt="{{ trainer.name }}">
+                {% else %}
+                    <div style="width: 100%; height: 100%; background: #333; display: flex; align-items: center; justify-content: center; font-size: 3rem;">🏋️</div>
+                {% endif %}
+            </div>
+            <div class="preview-content">
+                <h3 style="margin-bottom: 0.5rem;">{{ trainer.name }}</h3>
+                <p style="color: var(--primary); font-size: 0.9rem;">{{ trainer.specialization }}</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    <div style="text-align: center; margin-top: 3rem;">
+        <a href="{% url 'schedule:trainers' %}" style="color: var(--primary); text-decoration: none; font-weight: bold; border-bottom: 2px solid var(--primary);">Все тренеры →</a>
+    </div>
+</section>
+
+<section class="container">
+    <h2 class="section-title">Свежее в <span>Блоге</span></h2>
+    <div class="preview-grid">
+        {% for post in latest_posts %}
+        <div class="preview-card">
+            <div class="preview-image-container">
+                {% if post.image %}
+                    <img src="{{ post.image.url }}" class="preview-image" alt="{{ post.title }}">
+                {% else %}
+                    <div style="width: 100%; height: 100%; background: #333; display: flex; align-items: center; justify-content: center; color: #666;">Нет фото</div>
+                {% endif %}
+            </div>
+            <div class="preview-content">
+                <h3 style="margin-bottom: 1rem; font-size: 1.2rem;">{{ post.title }}</h3>
+                <p style="color: #888; font-size: 0.9rem; margin-bottom: 1.5rem;">{{ post.content|truncatewords:15 }}</p>
+                <a href="{% url 'blog:detail' post.id %}" style="color: var(--primary); text-decoration: none; font-weight: 600;">Читать далее</a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
 </section>
 {% endblock %}
