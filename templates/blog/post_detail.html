@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ post.title }}{% endblock %}
+
+{% block content %}
+<section class="container" style="padding-top: 100px; max-width: 800px; margin: 0 auto;">
+    <article style="background: var(--secondary); padding: 2rem; border-radius: 8px; border: 1px solid var(--accent);">
+        <h1 style="color: var(--primary); margin-bottom: 0.5rem; font-size: 2.5rem;">{{ post.title }}</h1>
+        <p style="color: #888; font-size: 0.9rem; margin-bottom: 2rem;">
+            Опубликовано: {{ post.created_at|date:"d M Y" }} | Автор: {{ post.author.username }}
+        </p>
+
+        {% if post.image %}
+            <img src="{{ post.image.url }}" alt="{{ post.title }}" style="width: 100%; border-radius: 8px; margin-bottom: 2rem; max-height: 400px; object-fit: cover;">
+        {% endif %}
+
+        <div style="line-height: 1.8; color: #ddd;">
+            {{ post.content|linebreaks }}
+        </div>
+        
+        <hr style="margin: 3rem 0 1.5rem; border-color: var(--accent);">
+        <a href="{% url 'blog:list' %}" style="color: var(--primary); text-decoration: none;">← Вернуться к списку статей</a>
+    </article>
+</section>
+{% endblock %}

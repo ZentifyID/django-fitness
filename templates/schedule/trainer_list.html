@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block title %}Наши тренеры{% endblock %}
+
+{% block content %}
+<section class="container" style="padding-top: 100px;">
+    <h2 class="section-title">Наши <span>Тренеры</span></h2>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 2rem;">
+        {% for trainer in trainers %}
+            <div style="background: var(--secondary); border: 1px solid var(--accent); border-radius: 8px; overflow: hidden; text-align: center;">
+                {% if trainer.photo %}
+                    <img src="{{ trainer.photo.url }}" alt="{{ trainer.name }}" style="width: 100%; height: 300px; object-fit: cover;">
+                {% else %}
+                    <div style="width: 100%; height: 300px; background: #333; display: flex; align-items: center; justify-content: center; color: #666; font-size: 3rem;">🏋️‍♂️</div>
+                {% endif %}
+                <div style="padding: 1.5rem;">
+                    <h3 style="margin-bottom: 0.5rem; font-size: 1.5rem;">{{ trainer.name }}</h3>
+                    <p style="color: var(--primary); font-weight: bold; margin-bottom: 1rem;">{{ trainer.specialization }}</p>
+                    <p style="color: #ccc; font-size: 0.9rem; line-height: 1.4;">{{ trainer.bio }}</p>
+                </div>
+            </div>
+        {% empty %}
+            <p style="text-align: center; grid-column: 1 / -1; color: #888;">Информация о тренерах скоро появится.</p>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}

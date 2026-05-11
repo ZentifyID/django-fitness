@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block title %}Личный кабинет{% endblock %}
+
+{% block content %}
+<section class="container" style="padding-top: 100px;">
+    <h2 class="section-title">Личный <span>кабинет</span></h2>
+
+    <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 2rem;">
+        <!-- Профиль -->
+        <div style="background: var(--secondary); padding: 2rem; border-radius: 8px; border: 1px solid var(--accent);">
+            <h3>{{ user.username }}</h3>
+            <hr style="margin: 1rem 0; border-color: var(--accent);">
+            <p><strong>Email:</strong> {{ user.email|default:"Не указан" }}</p>
+            <p><strong>Телефон:</strong> {{ profile.phone|default:"Не указан" }}</p>
+            
+            <h4 style="margin-top: 1.5rem; color: var(--primary);">Ваш абонемент:</h4>
+            {% if profile.membership %}
+                <p>{{ profile.membership.name }}</p>
+                <p style="color: #888; font-size: 0.9rem;">Годен до: {{ profile.membership_expires|date:"d.m.Y" }}</p>
+            {% else %}
+                <p>Нет активного абонемента.</p>
+                <a href="{% url 'pricing' %}" class="btn-primary" style="display: inline-block; margin-top: 1rem; padding: 0.5rem 1rem;">Купить абонемент</a>
+            {% endif %}
+        </div>
+
+        <!-- Мои записи -->
+        <div style="background: var(--secondary); padding: 2rem; border-radius: 8px; border: 1px solid var(--accent);">
+            <h3 style="margin-bottom: 1.5rem;">Мои записи на занятия</h3>
+            {% if bookings %}
+                <ul style="list-style: none;">
+                {% for booking in bookings %}
+                    <li style="padding: 1rem; border-bottom: 1px solid var(--accent); display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <strong style="color: {{ booking.schedule.activity.color }};">{{ booking.schedule.activity.name }}</strong>
+                            <br>
+                            <span style="font-size: 0.9rem; color: #ccc;">{{ booking.schedule.start_time|date:"d E Y, H:i" }}</span>
+                        </div>
+                        <span style="font-size: 0.9rem; padding: 0.3rem 0.6rem; background: rgba(255,255,255,0.1); border-radius: 4px;">Записан</span>
+                    </li>
+                {% endfor %}
+                </ul>
+            {% else %}
+                <p style="color: #888;">Вы еще не записались ни на одно занятие.</p>
+                <a href="{% url 'schedule:list' %}" style="color: var(--primary); text-decoration: underline;">Смотреть расписание</a>
+            {% endif %}
+        </div>
+    </div>
+</section>
+{% endblock %}

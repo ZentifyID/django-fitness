@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block title %}Блог{% endblock %}
+
+{% block content %}
+<section class="container" style="padding-top: 100px;">
+    <h2 class="section-title">Наш <span>блог</span></h2>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 2rem;">
+        {% for post in posts %}
+            <article style="background: var(--secondary); border-radius: 8px; overflow: hidden; border: 1px solid var(--accent);">
+                {% if post.image %}
+                    <img src="{{ post.image.url }}" alt="{{ post.title }}" style="width: 100%; height: 200px; object-fit: cover;">
+                {% else %}
+                    <div style="width: 100%; height: 200px; background: #333; display: flex; align-items: center; justify-content: center; color: #666;">Нет изображения</div>
+                {% endif %}
+                <div style="padding: 1.5rem;">
+                    <h3 style="margin-bottom: 0.5rem;"><a href="{% url 'blog:detail' post.id %}" style="color: var(--text-color); text-decoration: none;">{{ post.title }}</a></h3>
+                    <p style="font-size: 0.8rem; color: var(--primary); margin-bottom: 1rem;">{{ post.created_at|date:"d M Y" }} | Автор: {{ post.author.username }}</p>
+                    <p style="color: #ccc; margin-bottom: 1rem;">{{ post.content|truncatewords:20 }}</p>
+                    <a href="{% url 'blog:detail' post.id %}" style="color: var(--primary); font-weight: bold; text-decoration: none;">Читать далее →</a>
+                </div>
+            </article>
+        {% empty %}
+            <p style="text-align: center; grid-column: 1 / -1; color: #888;">Пока нет опубликованных статей.</p>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}

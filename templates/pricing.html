@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block title %}Тарифы{% endblock %}
+
+{% block content %}
+<section class="container" style="padding-top: 100px;">
+    <h2 class="section-title">Наши <span>Тарифы</span></h2>
+
+    <div style="display: flex; justify-content: center; gap: 2rem; flex-wrap: wrap;">
+        {% for plan in plans %}
+            <div style="background: var(--secondary); border: 1px solid {% if forloop.counter == 2 %}var(--primary){% else %}var(--accent){% endif %}; border-radius: 8px; padding: 2.5rem 2rem; text-align: center; width: 300px; transition: transform 0.3s; position: relative;">
+                {% if forloop.counter == 2 %}
+                    <div style="position: absolute; top: -15px; left: 50%; transform: translateX(-50%); background: var(--primary); color: white; padding: 5px 15px; border-radius: 20px; font-size: 0.8rem; font-weight: bold;">ПОПУЛЯРНОЕ</div>
+                {% endif %}
+                
+                <h3 style="font-size: 1.8rem; margin-bottom: 1rem;">{{ plan.name }}</h3>
+                <div style="font-size: 2.5rem; font-weight: bold; margin-bottom: 0.5rem; color: white;">
+                    {{ plan.price|floatformat:0 }} ₽
+                </div>
+                <p style="color: #888; font-size: 0.9rem; margin-bottom: 2rem;">за {{ plan.duration_days }} дней</p>
+                
+                <p style="color: #ccc; min-height: 80px; margin-bottom: 2rem;">{{ plan.description }}</p>
+                
+                <a href="#" class="btn-primary" style="display: block; padding: 1rem; {% if forloop.counter != 2 %}background: transparent; border: 2px solid var(--primary); color: var(--primary);{% endif %}">
+                    Оформить
+                </a>
+            </div>
+        {% empty %}
+            <p style="text-align: center; color: #888; width: 100%;">Тарифы пока не добавлены.</p>
+        {% endfor %}
+    </div>
+</section>
+
+<style>
+    /* Эффект наведения на карточки */
+    .container > div > div:hover {
+        transform: translateY(-10px);
+    }
+</style>
+{% endblock %}

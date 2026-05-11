@@ -1,0 +1,38 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Fitness Club{% endblock %}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+
+    <nav class="navbar">
+        <a href="/" class="nav-brand">FITNESS<span style="color: #f2f2f2;">CLUB</span></a>
+        <ul class="nav-links">
+            <li><a href="/">Главная</a></li>
+            <li><a href="{% url 'schedule:list' %}">Расписание</a></li>
+            <li><a href="{% url 'schedule:trainers' %}">Тренеры</a></li>
+            <li><a href="{% url 'blog:list' %}">Блог</a></li>
+        </ul>
+        <div class="nav-actions">
+            {% if user.is_authenticated %}
+                <a href="{% url 'members:dashboard' %}" class="btn-primary" style="margin-right: 10px;">Кабинет</a>
+                <form action="{% url 'members:logout' %}" method="POST" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" style="background:none; border:none; color: #888; cursor:pointer; font-size: 0.9rem;">Выйти</button>
+                </form>
+            {% else %}
+                <a href="{% url 'members:login' %}" class="btn-primary">Войти</a>
+            {% endif %}
+        </div>
+    </nav>
+
+    {% block content %}
+    {% endblock %}
+
+</body>
+</html>

@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block title %}Расписание занятий{% endblock %}
+
+{% block content %}
+<section class="container" style="padding-top: 100px;">
+    <h2 class="section-title">Расписание <span>занятий</span></h2>
+
+    {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}" style="padding: 1rem; margin-bottom: 1rem; border-radius: 4px; background: rgba(255,255,255,0.1); border-left: 4px solid var(--primary);">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 2rem;">
+        {% for schedule in schedules %}
+            <div style="background: var(--secondary); border: 1px solid var(--accent); padding: 1.5rem; border-radius: 8px; transition: transform 0.3s;">
+                <h3 style="color: {{ schedule.activity.color }}; margin-bottom: 0.5rem; font-size: 1.5rem;">{{ schedule.activity.name }}</h3>
+                <p style="margin-bottom: 0.5rem; color: #ccc;">{{ schedule.start_time|date:"d E Y, H:i" }}</p>
+                
+                <div style="margin-bottom: 1rem; font-size: 0.9rem;">
+                    <p><strong>Тренер:</strong> {{ schedule.trainer.name|default:"Не назначен" }}</p>
+                    <p><strong>Длительность:</strong> {{ schedule.activity.duration_minutes }} мин.</p>
+                    <p><strong>Мест:</strong> {{ schedule.bookings.count }} / {{ schedule.capacity }}</p>
+                </div>
+
+                {% if user.is_authenticated %}
+                    <form action="{% url 'schedule:book' schedule.id %}" method="POST">
+                        {% csrf_token %}
+                        <button type="submit" class="btn-primary" style="width: 100%; padding: 0.75rem;">Записаться</button>
+                    </form>
+                {% else %}
+                    <p style="font-size: 0.9rem; color: #888;">Для записи необходимо <a href="#" style="color: var(--primary);">войти</a>.</p>
+                {% endif %}
+            </div>
+        {% empty %}
+            <p style="text-align: center; grid-column: 1 / -1;">В ближайшее время занятий нет.</p>
+        {% endfor %}
+    </div>
+</section>
+
+<style>
+    .alert-success { border-left-color: #4CAF50 !important; }
+    .alert-error { border-left-color: #F44336 !important; }
+    .alert-warning { border-left-color: #FF9800 !important; }
+</style>
+{% endblock %}
