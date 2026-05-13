@@ -8,17 +8,20 @@ import datetime
 from .models import MemberProfile, MembershipPlan
 from schedule.models import Booking
 
+from .forms import MemberRegistrationForm, ProfileUpdateForm
+
 def register_view(request):
     if request.method == 'POST':
-        form = UserCreationForm(request.POST)
+        form = MemberRegistrationForm(request.POST)
         if form.is_valid():
             user = form.save()
-            MemberProfile.objects.create(user=user)
+            phone = form.cleaned_data.get('phone')
+            MemberProfile.objects.create(user=user, phone=phone)
             login(request, user)
             messages.success(request, 'Регистрация прошла успешно!')
             return redirect('members:dashboard')
     else:
-        form = UserCreationForm()
+        form = MemberRegistrationForm()
     return render(request, 'members/register.html', {'form': form})
 
 def login_view(request):
@@ -43,9 +46,21 @@ def logout_view(request):
 def dashboard(request):
     profile, created = MemberProfile.objects.get_or_create(user=request.user)
     bookings = Booking.objects.filter(user=request.user).order_by('schedule__start_time')
+    
+    if request.method == 'POST':
+        form = ProfileUpdateForm(request.POST, instance=profile, user=request.user)
+        if form.is_valid():
+            form.save(user=request.user)
+            messages.success(request, 'Профиль успешно обновлен!')
+            return redirect('members:dashboard')
+    else:
+        form = ProfileUpdateForm(instance=profile, user=request.user)
+
     return render(request, 'members/dashboard.html', {
         'profile': profile,
-        'bookings': bookings
+        'bookings': bookings,
+        'form': form,
+        'now': timezone.now()
     })
 
 @login_required

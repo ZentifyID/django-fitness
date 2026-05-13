@@ -3,14 +3,15 @@
 {% block title %}Регистрация{% endblock %}
 
 {% block content %}
-<section class="container" style="padding-top: 100px; max-width: 500px; margin: 0 auto;">
+<section class="container" style="padding-top: 100px; max-width: 900px; margin: 0 auto;">
     <h2 class="section-title"><span>Регистрация</span></h2>
-    
+
     <div style="background: var(--secondary); padding: 2rem; border-radius: 8px; border: 1px solid var(--accent);">
         <form method="POST">
             {% csrf_token %}
             {{ form.as_p }}
-            <button type="submit" class="btn-primary" style="width: 100%; padding: 1rem; margin-top: 1rem;">Зарегистрироваться</button>
+            <button type="submit" class="btn-primary"
+                style="width: 100%; padding: 1rem; margin-top: 1rem;">Зарегистрироваться</button>
         </form>
         <p style="text-align: center; margin-top: 1.5rem; font-size: 0.9rem;">
             Уже есть аккаунт? <a href="{% url 'members:login' %}" style="color: var(--primary);">Войти</a>
@@ -20,11 +21,42 @@
 
 <style>
     /* Базовые стили для форм Django */
-    form p { margin-bottom: 1rem; }
-    form label { display: block; margin-bottom: 0.5rem; color: #ccc; }
-    form input { width: 100%; padding: 0.8rem; border: 1px solid var(--accent); background: #222; color: white; border-radius: 4px; }
-    form input:focus { outline: none; border-color: var(--primary); }
-    ul.errorlist { color: #F44336; list-style: none; margin-bottom: 0.5rem; font-size: 0.85rem; }
-    .helptext { font-size: 0.8rem; color: #888; display: block; margin-top: 0.3rem; }
+    form p {
+        margin-bottom: 1rem;
+    }
+
+    form label {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: #ccc;
+    }
+
+    form input {
+        width: 100%;
+        padding: 0.8rem;
+        border: 1px solid var(--accent);
+        background: #222;
+        color: white;
+        border-radius: 4px;
+    }
+
+    form input:focus {
+        outline: none;
+        border-color: var(--primary);
+    }
+
+    ul.errorlist {
+        color: #F44336;
+        list-style: none;
+        margin-bottom: 0.5rem;
+        font-size: 0.85rem;
+    }
+
+    .helptext {
+        font-size: 0.8rem;
+        color: #888;
+        display: block;
+        margin-top: 0.3rem;
+    }
 </style>
 {% endblock %}

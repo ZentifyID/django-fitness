@@ -34,8 +34,32 @@
         </div>
     </nav>
 
-    {% block content %}
-    {% endblock %}
+    <div class="content-wrapper">
+        {% block content %}
+        {% endblock %}
+    </div>
+
+    <!-- Toast Notifications -->
+    <div class="toast-container" id="toast-container">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="toast {{ message.tags }}" onclick="this.classList.add('fade-out'); setTimeout(() => this.remove(), 500);">
+                    <span>{{ message }}</span>
+                    <span style="margin-left: 1rem; opacity: 0.5;">&times;</span>
+                </div>
+            {% endfor %}
+        {% endif %}
+    </div>
+
+    <script>
+        // Auto-close toasts after 5 seconds
+        document.querySelectorAll('.toast').forEach(toast => {
+            setTimeout(() => {
+                toast.classList.add('fade-out');
+                setTimeout(() => toast.remove(), 500);
+            }, 5000);
+        });
+    </script>
 
     <footer>
         <div class="footer-grid">

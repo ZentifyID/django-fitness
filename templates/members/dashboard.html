@@ -8,35 +8,53 @@
 
     <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 2rem;">
         <!-- Профиль -->
-        <div style="background: var(--secondary); padding: 2rem; border-radius: 8px; border: 1px solid var(--accent);">
-            <h3>{{ user.username }}</h3>
-            <hr style="margin: 1rem 0; border-color: var(--accent);">
-            <p><strong>Email:</strong> {{ user.email|default:"Не указан" }}</p>
-            <p><strong>Телефон:</strong> {{ profile.phone|default:"Не указан" }}</p>
-            
-            <h4 style="margin-top: 1.5rem; color: var(--primary);">Ваш абонемент:</h4>
-            {% if profile.membership %}
-                <p>{{ profile.membership.name }}</p>
-                <p style="color: #888; font-size: 0.9rem;">Годен до: {{ profile.membership_expires|date:"d.m.Y" }}</p>
-            {% else %}
-                <p>Нет активного абонемента.</p>
-                <a href="{% url 'pricing' %}" class="btn-primary" style="display: inline-block; margin-top: 1rem; padding: 0.5rem 1rem;">Купить абонемент</a>
-            {% endif %}
+        <div>
+            <div style="background: var(--secondary); padding: 2rem; border-radius: 8px; border: 1px solid var(--accent); margin-bottom: 2rem;">
+                <h3>{{ user.username }}</h3>
+                <hr style="margin: 1rem 0; border-color: var(--accent);">
+                <p><strong>Email:</strong> {{ user.email|default:"Не указан" }}</p>
+                <p><strong>Телефон:</strong> {{ profile.phone|default:"Не указан" }}</p>
+                
+                <h4 style="margin-top: 1.5rem; color: var(--primary);">Ваш абонемент:</h4>
+                {% if profile.membership %}
+                    <p>{{ profile.membership.name }}</p>
+                    <p style="color: #888; font-size: 0.9rem;">Годен до: {{ profile.membership_expires|date:"d.m.Y" }}</p>
+                {% else %}
+                    <p>Нет активного абонемента.</p>
+                    <a href="{% url 'pricing' %}" class="btn-primary" style="display: inline-block; margin-top: 1rem; padding: 0.5rem 1rem;">Купить абонемент</a>
+                {% endif %}
+            </div>
+
+            <!-- Редактирование профиля -->
+            <div style="background: var(--secondary); padding: 2rem; border-radius: 8px; border: 1px solid var(--accent);">
+                <h3 style="margin-bottom: 1rem;">Редактировать данные</h3>
+                <form method="POST">
+                    {% csrf_token %}
+                    <div class="profile-form">
+                        {{ form.as_p }}
+                    </div>
+                    <button type="submit" class="btn-primary" style="width: 100%; padding: 0.8rem; margin-top: 0.5rem;">Сохранить изменения</button>
+                </form>
+            </div>
         </div>
 
         <!-- Мои записи -->
-        <div style="background: var(--secondary); padding: 2rem; border-radius: 8px; border: 1px solid var(--accent);">
+        <div style="background: var(--secondary); padding: 2rem; border-radius: 8px; border: 1px solid var(--accent); height: fit-content;">
             <h3 style="margin-bottom: 1.5rem;">Мои записи на занятия</h3>
             {% if bookings %}
                 <ul style="list-style: none;">
                 {% for booking in bookings %}
-                    <li style="padding: 1rem; border-bottom: 1px solid var(--accent); display: flex; justify-content: space-between; align-items: center;">
+                    <li style="padding: 1rem; border-bottom: 1px solid var(--accent); display: flex; justify-content: space-between; align-items: center; {% if booking.schedule.start_time < now %}opacity: 0.6;{% endif %}">
                         <div>
                             <strong style="color: {{ booking.schedule.activity.color }};">{{ booking.schedule.activity.name }}</strong>
                             <br>
                             <span style="font-size: 0.9rem; color: #ccc;">{{ booking.schedule.start_time|date:"d E Y, H:i" }}</span>
                         </div>
-                        <span style="font-size: 0.9rem; padding: 0.3rem 0.6rem; background: rgba(255,255,255,0.1); border-radius: 4px;">Записан</span>
+                        {% if booking.schedule.start_time < now %}
+                            <span style="font-size: 0.8rem; padding: 0.3rem 0.6rem; background: rgba(0,255,0,0.1); color: #4CAF50; border: 1px solid #4CAF50; border-radius: 4px;">Завершено</span>
+                        {% else %}
+                            <span style="font-size: 0.8rem; padding: 0.3rem 0.6rem; background: rgba(255,69,0,0.1); color: var(--primary); border: 1px solid var(--primary); border-radius: 4px;">Записан</span>
+                        {% endif %}
                     </li>
                 {% endfor %}
                 </ul>
@@ -47,4 +65,11 @@
         </div>
     </div>
 </section>
+
+<style>
+    .profile-form p { margin-bottom: 1rem; }
+    .profile-form label { display: block; margin-bottom: 0.5rem; color: #ccc; font-size: 0.9rem; }
+    .profile-form input { width: 100%; padding: 0.6rem; border: 1px solid var(--accent); background: #222; color: white; border-radius: 4px; }
+    .profile-form input:focus { outline: none; border-color: var(--primary); }
+</style>
 {% endblock %}
