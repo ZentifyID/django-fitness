@@ -3,10 +3,10 @@
 {% block title %}Личный кабинет{% endblock %}
 
 {% block content %}
-<section class="container" style="padding-top: 100px;">
+<section class="container">
     <h2 class="section-title">Личный <span>кабинет</span></h2>
 
-    <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 2rem;">
+    <div class="dashboard-grid">
         <!-- Профиль -->
         <div>
             <div style="background: var(--secondary); padding: 2rem; border-radius: 8px; border: 1px solid var(--accent); margin-bottom: 2rem;">
@@ -79,7 +79,13 @@
                             <br>
                             <small style="color: #888;">Тренер: {{ booking.schedule.trainer.name }}</small>
                         </div>
-                        <span style="font-size: 0.8rem; padding: 0.3rem 0.6rem; background: rgba(255,69,0,0.1); color: var(--primary); border: 1px solid var(--primary); border-radius: 4px;">Записан</span>
+                        <div style="display: flex; align-items: center; gap: 1rem;">
+                            <span style="font-size: 0.8rem; padding: 0.3rem 0.6rem; background: rgba(255,69,0,0.1); color: var(--primary); border: 1px solid var(--primary); border-radius: 4px;">Записан</span>
+                            <form action="{% url 'schedule:cancel' booking.id %}" method="POST" style="display: inline;" onsubmit="return confirm('Вы уверены, что хотите отменить запись?');">
+                                {% csrf_token %}
+                                <button type="submit" title="Отменить запись" style="background: none; border: none; color: #888; cursor: pointer; font-size: 1.2rem; line-height: 1; transition: color 0.3s;" onmouseover="this.style.color='#F44336'" onmouseout="this.style.color='#888'">&times;</button>
+                            </form>
+                        </div>
                     </li>
                 {% endfor %}
                 </ul>

@@ -99,3 +99,16 @@ def book_class(request, schedule_id):
     Booking.objects.create(schedule=schedule, user=request.user)
     messages.success(request, f'Вы успешно записаны на {schedule.activity.name}!')
     return redirect('schedule:list')
+
+@login_required
+def cancel_booking(request, booking_id):
+    booking = get_object_or_404(Booking, id=booking_id, user=request.user)
+    
+    # Проверка: можно ли отменить (только если занятие еще не началось)
+    if booking.schedule.start_time < timezone.now():
+        messages.error(request, 'Нельзя отменить запись на прошедшее занятие.')
+        return redirect('members:dashboard')
+        
+    booking.delete()
+    messages.success(request, 'Запись на занятие успешно отменена.')
+    return redirect('members:dashboard')
