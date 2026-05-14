@@ -5,6 +5,47 @@
 {% block content %}
 <section class="container" style="padding-top: 100px;">
     <h2 class="section-title">Расписание <span>занятий</span></h2>
+    
+    <!-- Фильтры -->
+    <div style="background: var(--secondary); padding: 1.5rem; border-radius: 12px; border: 1px solid var(--accent); margin-bottom: 3rem;">
+        <form method="GET" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; align-items: end;">
+            
+            <div>
+                <label style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; color: #888;">Занятие</label>
+                <select name="activity" style="width: 100%; padding: 0.8rem; background: #222; border: 1px solid var(--accent); color: white; border-radius: 6px;">
+                    <option value="">Все занятия</option>
+                    {% for activity in activities %}
+                        <option value="{{ activity.id }}" {% if selected_activity == activity.id|stringformat:"s" %}selected{% endif %}>{{ activity.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div>
+                <label style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; color: #888;">Тренер</label>
+                <select name="trainer" style="width: 100%; padding: 0.8rem; background: #222; border: 1px solid var(--accent); color: white; border-radius: 6px;">
+                    <option value="">Все тренеры</option>
+                    {% for trainer in trainers %}
+                        <option value="{{ trainer.id }}" {% if selected_trainer == trainer.id|stringformat:"s" %}selected{% endif %}>{{ trainer.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div>
+                <label style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; color: #888;">Время суток</label>
+                <select name="time_of_day" style="width: 100%; padding: 0.8rem; background: #222; border: 1px solid var(--accent); color: white; border-radius: 6px;">
+                    <option value="">Любое время</option>
+                    <option value="morning" {% if selected_time == "morning" %}selected{% endif %}>Утро (06:00 - 12:00)</option>
+                    <option value="afternoon" {% if selected_time == "afternoon" %}selected{% endif %}>День (12:00 - 18:00)</option>
+                    <option value="evening" {% if selected_time == "evening" %}selected{% endif %}>Вечер (18:00 - 00:00)</option>
+                </select>
+            </div>
+
+            <div style="display: flex; gap: 0.5rem;">
+                <button type="submit" class="btn-primary" style="flex: 2; padding: 0.8rem;">Применить</button>
+                <a href="{% url 'schedule:list' %}" style="flex: 1; padding: 0.8rem; background: #333; color: white; text-align: center; text-decoration: none; border-radius: 6px; font-size: 0.9rem;">Сброс</a>
+            </div>
+        </form>
+    </div>
 
     <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 2rem;">
         {% for schedule in schedules %}

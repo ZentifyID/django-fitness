@@ -19,10 +19,33 @@ class MemberProfile(models.Model):
     phone = models.CharField(max_length=20, blank=True, verbose_name="Телефон")
     membership = models.ForeignKey(MembershipPlan, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Абонемент")
     membership_expires = models.DateField(null=True, blank=True, verbose_name="Годен до")
+    is_frozen = models.BooleanField(default=False, verbose_name="Заморожен")
+    freeze_start = models.DateField(null=True, blank=True, verbose_name="Дата начала заморозки")
     
     def __str__(self):
         return f"Профиль {self.user.username}"
         
+    def days_left(self):
+        from django.utils import timezone
+        if self.membership_expires:
+            delta = self.membership_expires - timezone.now().date()
+            return max(0, delta.days)
+        return 0
+
+    def membership_progress(self):
+        if self.membership and self.membership_expires:
+            total = self.membership.duration_days
+            left = self.days_left()
+            if total > 0:
+                # Процент пройденного времени (от 0 до 100)
+                # Если осталось 30 дней из 30, прогресс 0% (или 100%?). 
+                # Обычно прогресс-бар показывает сколько "пройдено". 
+                # Давайте показывать сколько "осталось" или сколько "прошло".
+                # Лучше показывать сколько ОСТАЛОСЬ визуально, или сколько ПРОШЛО.
+                # Сделаем "процент оставшегося", так нагляднее для "статуса абонемента".
+                return min(100, int((left / total) * 100))
+        return 0
+
     class Meta:
         verbose_name = "Профиль клиента"
         verbose_name_plural = "Профили клиентов"

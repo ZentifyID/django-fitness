@@ -8,20 +8,20 @@
 
     <div style="display: flex; justify-content: center; gap: 2rem; flex-wrap: wrap;">
         {% for plan in plans %}
-            <div style="background: var(--secondary); border: 1px solid {% if forloop.counter == 2 %}var(--primary){% else %}var(--accent){% endif %}; border-radius: 8px; padding: 2.5rem 2rem; text-align: center; width: 300px; transition: transform 0.3s; position: relative;">
+            <div style="background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(10px); border: 1px solid {% if forloop.counter == 2 %}var(--primary){% else %}rgba(255, 255, 255, 0.05){% endif %}; border-radius: 24px; padding: 2.5rem 2rem; text-align: center; width: 320px; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
                 {% if forloop.counter == 2 %}
-                    <div style="position: absolute; top: -15px; left: 50%; transform: translateX(-50%); background: var(--primary); color: white; padding: 5px 15px; border-radius: 20px; font-size: 0.8rem; font-weight: bold;">ПОПУЛЯРНОЕ</div>
+                    <div style="position: absolute; top: -15px; left: 50%; transform: translateX(-50%); background: var(--primary); color: white; padding: 5px 20px; border-radius: 50px; font-size: 0.75rem; font-weight: 800; letter-spacing: 1px; box-shadow: 0 0 20px rgba(255, 69, 0, 0.4);">ПОПУЛЯРНОЕ</div>
                 {% endif %}
                 
-                <h3 style="font-size: 1.8rem; margin-bottom: 1rem;">{{ plan.name }}</h3>
-                <div style="font-size: 2.5rem; font-weight: bold; margin-bottom: 0.5rem; color: white;">
-                    {{ plan.price|floatformat:0 }} ₽
+                <h3 style="font-size: 1.8rem; margin-bottom: 1rem; color: #fff;">{{ plan.name }}</h3>
+                <div style="font-size: 2.8rem; font-weight: 900; margin-bottom: 0.5rem; color: white; letter-spacing: -1px;">
+                    {{ plan.price|floatformat:0 }}<span style="font-size: 1.5rem; margin-left: 5px;">₽</span>
                 </div>
                 <p style="color: #888; font-size: 0.9rem; margin-bottom: 2rem;">за {{ plan.duration_days }} дней</p>
                 
-                <p style="color: #ccc; min-height: 80px; margin-bottom: 2rem;">{{ plan.description }}</p>
+                <div style="color: #bbb; min-height: 80px; margin-bottom: 2rem; line-height: 1.5;">{{ plan.description }}</div>
                 
-                <a href="{% url 'members:payment' plan.id %}" class="btn-primary" style="display: block; padding: 1rem; {% if forloop.counter != 2 %}background: transparent; border: 2px solid var(--primary); color: var(--primary);{% endif %}">
+                <a href="{% url 'members:payment' plan.id %}" class="btn-primary" style="display: block; width: 100%; {% if forloop.counter != 2 %}background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.2); color: white;{% endif %}">
                     Оформить
                 </a>
             </div>

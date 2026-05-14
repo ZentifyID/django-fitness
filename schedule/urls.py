@@ -6,5 +6,6 @@ app_name = 'schedule'
 urlpatterns = [
     path('', views.schedule_list, name='list'),
     path('trainers/', views.trainer_list, name='trainers'),
+    path('trainer/<int:trainer_id>/review/', views.add_review, name='add_review'),
     path('book/<int:schedule_id>/', views.book_class, name='book'),
 ]

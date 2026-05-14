@@ -18,8 +18,67 @@
                 </div>
                 <div style="padding: 1.5rem;">
                     <h3 style="margin-bottom: 0.5rem; font-size: 1.5rem;">{{ trainer.name }}</h3>
-                    <p style="color: var(--primary); font-weight: bold; margin-bottom: 1rem;">{{ trainer.specialization }}</p>
-                    <p style="color: #ccc; font-size: 0.9rem; line-height: 1.4;">{{ trainer.bio }}</p>
+                    <p style="color: var(--primary); font-weight: bold; margin-bottom: 0.5rem;">{{ trainer.specialization }}</p>
+                    
+                    <!-- Рейтинг -->
+                    <div style="margin-bottom: 1rem;">
+                        <span style="color: #FFD700; font-size: 1.1rem;">
+                            {% if trainer.avg_rating %}
+                                {% for i in "12345"|make_list %}
+                                    {% if forloop.counter <= trainer.avg_rating %}★{% else %}☆{% endif %}
+                                {% endfor %}
+                                ({{ trainer.avg_rating|floatformat:1 }})
+                            {% else %}
+                                Нет оценок
+                            {% endif %}
+                        </span>
+                        <span style="color: #888; font-size: 0.8rem; margin-left: 0.5rem;">{{ trainer.reviews.count }} отзывов</span>
+                    </div>
+
+                    <p style="color: #ccc; font-size: 0.9rem; line-height: 1.4; margin-bottom: 1.5rem;">{{ trainer.bio }}</p>
+
+                    <hr style="border: 0; border-top: 1px solid var(--accent); margin-bottom: 1rem;">
+
+                    <!-- Отзывы -->
+                    <div style="margin-top: 1rem;">
+                        <h4 style="font-size: 1rem; margin-bottom: 0.5rem; color: #eee;">Последние отзывы:</h4>
+                        {% for review in trainer.reviews.all|dictsortreversed:"created_at"|slice:":2" %}
+                            <div style="background: rgba(255,255,255,0.03); padding: 0.8rem; border-radius: 6px; margin-bottom: 0.5rem; font-size: 0.85rem;">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 0.3rem;">
+                                    <strong style="color: var(--primary);">{{ review.user.username }}</strong>
+                                    <span style="color: #FFD700;">{{ review.rating }}★</span>
+                                </div>
+                                <p style="color: #aaa; font-style: italic;">"{{ review.text }}"</p>
+                            </div>
+                        {% empty %}
+                            <p style="color: #666; font-size: 0.8rem;">Отзывов пока нет.</p>
+                        {% endfor %}
+                    </div>
+
+                    <!-- Форма отзыва -->
+                    {% if user.is_authenticated %}
+                        <button onclick="document.getElementById('review-form-{{ trainer.id }}').style.display='block'; this.style.display='none';" class="btn-primary" style="background: none; border: 1px solid var(--primary); color: var(--primary); width: 100%; margin-top: 1rem; padding: 0.5rem;">Оставить отзыв</button>
+                        
+                        <div id="review-form-{{ trainer.id }}" style="display: none; margin-top: 1rem; background: #222; padding: 1rem; border-radius: 8px;">
+                            <form action="{% url 'schedule:add_review' trainer.id %}" method="POST">
+                                {% csrf_token %}
+                                <div style="margin-bottom: 0.8rem;">
+                                    <label style="font-size: 0.8rem; color: #888;">Оценка:</label>
+                                    <select name="rating" style="width: 100%; padding: 0.4rem; background: #333; color: white; border: 1px solid #444;">
+                                        <option value="5">5 звезд</option>
+                                        <option value="4">4 звезды</option>
+                                        <option value="3">3 звезды</option>
+                                        <option value="2">2 звезды</option>
+                                        <option value="1">1 звезда</option>
+                                    </select>
+                                </div>
+                                <div style="margin-bottom: 0.8rem;">
+                                    <textarea name="text" rows="3" style="width: 100%; padding: 0.5rem; background: #333; color: white; border: 1px solid #444; font-size: 0.9rem;" placeholder="Напишите ваше мнение..."></textarea>
+                                </div>
+                                <button type="submit" class="btn-primary" style="width: 100%; padding: 0.5rem;">Отправить</button>
+                            </form>
+                        </div>
+                    {% endif %}
                 </div>
             </div>
         {% empty %}

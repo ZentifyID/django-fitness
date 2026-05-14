@@ -9,4 +9,5 @@ urlpatterns = [
     path('logout/', views.logout_view, name='logout'),
     path('dashboard/', views.dashboard, name='dashboard'),
     path('payment/<int:plan_id>/', views.payment_page, name='payment'),
+    path('toggle-freeze/', views.toggle_freeze, name='toggle_freeze'),
 ]

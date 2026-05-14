@@ -45,7 +45,18 @@ def logout_view(request):
 @login_required
 def dashboard(request):
     profile, created = MemberProfile.objects.get_or_create(user=request.user)
-    bookings = Booking.objects.filter(user=request.user).order_by('schedule__start_time')
+    
+    # Разделяем записи на будущие и прошедшие
+    now = timezone.now()
+    upcoming_bookings = Booking.objects.filter(
+        user=request.user, 
+        schedule__start_time__gte=now
+    ).order_by('schedule__start_time')
+    
+    past_bookings = Booking.objects.filter(
+        user=request.user, 
+        schedule__start_time__lt=now
+    ).order_by('-schedule__start_time')
     
     if request.method == 'POST':
         form = ProfileUpdateForm(request.POST, instance=profile, user=request.user)
@@ -58,9 +69,10 @@ def dashboard(request):
 
     return render(request, 'members/dashboard.html', {
         'profile': profile,
-        'bookings': bookings,
+        'upcoming_bookings': upcoming_bookings,
+        'past_bookings': past_bookings,
         'form': form,
-        'now': timezone.now()
+        'now': now
     })
 
 @login_required
@@ -78,3 +90,44 @@ def payment_page(request, plan_id):
         return redirect('members:dashboard')
         
     return render(request, 'members/payment.html', {'plan': plan})
+
+@login_required
+def toggle_freeze(request):
+    profile = request.user.profile
+    if not profile.membership:
+        messages.error(request, 'У вас нет активного абонемента для заморозки.')
+        return redirect('members:dashboard')
+        
+    if profile.is_frozen:
+        # Размораживаем
+        today = timezone.now().date()
+        freeze_days = (today - profile.freeze_start).days
+        if freeze_days > 0:
+            profile.membership_expires += datetime.timedelta(days=freeze_days)
+        
+        profile.is_frozen = False
+        profile.freeze_start = None
+        profile.save()
+        messages.success(request, f'Абонемент разморожен! Срок действия продлен на {max(0, freeze_days)} дн.')
+    else:
+        # Замораживаем
+        # 1. Отменяем все будущие записи, чтобы освободить места
+        now = timezone.now()
+        upcoming_bookings = Booking.objects.filter(
+            user=request.user, 
+            schedule__start_time__gte=now
+        )
+        cancelled_count = upcoming_bookings.count()
+        upcoming_bookings.delete()
+
+        # 2. Устанавливаем статус
+        profile.is_frozen = True
+        profile.freeze_start = now.date()
+        profile.save()
+        
+        msg = 'Абонемент заморожен. Вы не сможете записываться на занятия.'
+        if cancelled_count > 0:
+            msg += f' Ваши будущие записи ({cancelled_count}) были отменены.'
+        messages.warning(request, msg)
+        
+    return redirect('members:dashboard')

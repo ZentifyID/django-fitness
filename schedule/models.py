@@ -52,3 +52,18 @@ class Booking(models.Model):
         verbose_name = "Запись на занятие"
         verbose_name_plural = "Записи на занятия"
         unique_together = ('schedule', 'user')
+
+class TrainerReview(models.Model):
+    trainer = models.ForeignKey(Trainer, on_delete=models.CASCADE, related_name='reviews', verbose_name="Тренер")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="Пользователь")
+    rating = models.PositiveSmallIntegerField(verbose_name="Оценка (1-5)", choices=[(i, i) for i in range(1, 6)])
+    text = models.TextField(verbose_name="Отзыв")
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата")
+
+    class Meta:
+        verbose_name = "Отзыв о тренере"
+        verbose_name_plural = "Отзывы о тренерах"
+        unique_together = ('trainer', 'user')
+
+    def __str__(self):
+        return f"Отзыв от {self.user.username} на {self.trainer.name}"
