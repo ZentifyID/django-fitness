@@ -10,22 +10,41 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
+import os
 from pathlib import Path
+
+from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+# Load environment variables from a .env file if present.
+load_dotenv(BASE_DIR / '.env')
+
+
+def env_bool(name, default='False'):
+    return os.environ.get(name, default).strip().lower() in ('1', 'true', 'yes', 'on')
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-hk-yx6!2$vba!6e5wzgm-!=o)q3ks%d^4gdx0@l_-$fpi0s0hx'
+SECRET_KEY = os.environ.get(
+    'SECRET_KEY',
+    'django-insecure-hk-yx6!2$vba!6e5wzgm-!=o)q3ks%d^4gdx0@l_-$fpi0s0hx',
+)
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = env_bool('DEBUG', 'True')
 
-ALLOWED_HOSTS = []
+# Comma-separated list, e.g. "yourusername.pythonanywhere.com"
+ALLOWED_HOSTS = [h.strip() for h in os.environ.get('ALLOWED_HOSTS', '').split(',') if h.strip()]
+
+# Needed for the Django admin / forms over HTTPS on PythonAnywhere.
+CSRF_TRUSTED_ORIGINS = [
+    f'https://{h}' for h in ALLOWED_HOSTS if h and not h.startswith('.')
+]
 
 
 # Application definition
@@ -120,9 +139,18 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
-import os
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static_local')]
 
 MEDIA_URL = 'media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+# Default primary key field type
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Production-only security hardening (active when DEBUG is off).
+if not DEBUG:
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_CONTENT_TYPE_NOSNIFF = True
